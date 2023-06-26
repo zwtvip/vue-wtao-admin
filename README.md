@@ -1,20 +1,6 @@
-<div align="center"> <a href="https://github.com/xingyu4j/vue-vben-admin"> <img alt="VbenAdmin Logo" width="200" height="200" src="https://anncwb.github.io/anncwb/images/logo.png"> </a> <br> <br>
+<div align="center"> <a href="https://github.com/zwtvip/vue-wtao-admin"> <img alt="VbenAdmin Logo" width="200" height="200" src="https://anncwb.github.io/anncwb/images/logo.png"> </a> <br> <br>
 
-[![license](https://img.shields.io/github/license/xingyu4j/vue-vben-admin.svg)](LICENSE)
-
-<h1>v1.1.1</h1>
-
-## 精简版地址
-
-[gitee](https://gitee.com/xingyu4j/vue-vben-admin/tree/thin/) [github](https://github.com/xingyu4j/vue-vben-admin/tree/thin)
-
-## 预览地址
-
-[预览地址](http://vben.x-surge.com)
-
-## 实际开发项目
-
-[ruoyi-vue-vben](https://gitee.com/xingyuv/yudao-ui-admin-vben)
+[![license](https://img.shields.io/github/license/zwtvip/vue-vben-admin.svg)](LICENSE)
 
 </div>
 
@@ -71,9 +57,9 @@
 - 获取项目代码
 
 ```bash
-git clone https://github.com/xingyu4j/vue-vben-admin.git
+git clone https://github.com/zwtvip/vue-wtao-admin.git
 or
-git clone https://gitee.com/xingyu4j/vue-vben-admin.git
+git clone https://gitee.com/zwtvip/vue-wtao-admin.git
 ```
 
 - 安装依赖
