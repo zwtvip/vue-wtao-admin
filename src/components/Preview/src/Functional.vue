@@ -1,11 +1,15 @@
 <script lang="tsx">
 import { defineComponent, ref, unref, computed, reactive, watchEffect } from 'vue'
+import { Modal } from 'ant-design-vue'
 import { CloseOutlined, LeftOutlined, RightOutlined } from '@ant-design/icons-vue'
+import 'vue-cropper/dist/index.css'
+import { VueCropper } from 'vue-cropper'
 import resumeSvg from '@/assets/svg/preview/resume.svg'
 import rotateSvg from '@/assets/svg/preview/p-rotate.svg'
 import scaleSvg from '@/assets/svg/preview/scale.svg'
 import unScaleSvg from '@/assets/svg/preview/unscale.svg'
 import unRotateSvg from '@/assets/svg/preview/unrotate.svg'
+import editSvg from '@/assets/svg/preview/edit.svg'
 
 enum StatueEnum {
   LOADING,
@@ -23,6 +27,7 @@ interface ImgState {
   moveX: number
   moveY: number
   show: boolean
+  visible: boolean
 }
 const props = {
   show: {
@@ -74,11 +79,13 @@ export default defineComponent({
       currentIndex: 0,
       moveX: 0,
       moveY: 0,
-      show: props.show
+      show: props.show,
+      visible: false
     })
 
     const wrapElRef = ref<HTMLDivElement | null>(null)
     const imgElRef = ref<HTMLImageElement | null>(null)
+    const cropperRef = ref<any | null>(null)
 
     // 初始化
     function init() {
@@ -241,6 +248,30 @@ export default defineComponent({
       initState()
     }
 
+    // 图片编辑
+    function edit() {
+      imgState.show = false
+      imgState.visible = true
+    }
+
+    // 下载截图
+    function downloadImg() {
+      const aLink = document.createElement('a')
+      aLink.download = 'cropper'
+      const cropper = unref(cropperRef)
+      if (cropper) {
+        cropper.getCropData((data) => {
+          aLink.href = data
+          aLink.click()
+        })
+      }
+    }
+
+    function closeModal() {
+      imgState.show = true
+      imgState.visible = false
+    }
+
     expose({
       resume,
       close,
@@ -254,7 +285,7 @@ export default defineComponent({
       }
     })
 
-    // 上一页下一页
+    // 上一页 下一页
     function handleChange(direction: 'left' | 'right') {
       const { currentIndex } = imgState
       const { imageList } = props
@@ -346,6 +377,34 @@ export default defineComponent({
       )
     }
 
+    const renderEditModal = () => {
+      return (
+        <Modal
+          title="图片编辑"
+          visible={imgState.visible}
+          width={props.defaultWidth}
+          maskClosable={false}
+          onCancel={closeModal}
+          okText={'下载截图'}
+          cancelText={'取消'}
+          onOk={downloadImg}
+        >
+          <div style={{ width: '100%', height: '500px' }}>
+            <VueCropper
+              ref={cropperRef}
+              img={imgState.currentUrl}
+              info
+              centerBox
+              autoCrop
+              outputType={'png'}
+              autoCropWidth={150}
+              autoCropHeight={150}
+            ></VueCropper>
+          </div>
+        </Modal>
+      )
+    }
+
     const renderController = () => {
       return (
         <div class={`${prefixCls}__controller`}>
@@ -364,6 +423,9 @@ export default defineComponent({
           <div class={`${prefixCls}__controller-item`} onClick={() => rotateFunc(90)}>
             <img src={rotateSvg} />
           </div>
+          <div class={`${prefixCls}__controller-item`} onClick={edit}>
+            <img src={editSvg} />
+          </div>
         </div>
       )
     }
@@ -380,36 +442,41 @@ export default defineComponent({
     }
 
     return () => {
-      return (
-        imgState.show && (
-          <div class={prefixCls} ref={wrapElRef} onMouseup={handleMouseUp} onClick={handleMaskClick}>
-            <div class={`${prefixCls}-content`}>
-              {/*<Spin*/}
-              {/*  indicator={<LoadingOutlined style="font-size: 24px" spin />}*/}
-              {/*  spinning={true}*/}
-              {/*  class={[*/}
-              {/*    `${prefixCls}-image`,*/}
-              {/*    {*/}
-              {/*      hidden: imgState.status !== StatueEnum.LOADING,*/}
-              {/*    },*/}
-              {/*  ]}*/}
-              {/*/>*/}
-              <img
-                style={unref(getImageStyle)}
-                class={[`${prefixCls}-image`, imgState.status === StatueEnum.DONE ? '' : 'hidden']}
-                ref={imgElRef}
-                src={imgState.currentUrl}
-                onMousedown={handleAddMoveListener}
-              />
-              {renderClose()}
-              {renderIndex()}
-              {renderController()}
-              {renderArrow('left')}
-              {renderArrow('right')}
+      if (imgState.visible) {
+        return renderEditModal()
+      }
+      if (imgState.show) {
+        return (
+          imgState.show && (
+            <div class={prefixCls} ref={wrapElRef} onMouseup={handleMouseUp} onClick={handleMaskClick}>
+              <div class={`${prefixCls}-content`}>
+                {/*<Spin*/}
+                {/*  indicator={<LoadingOutlined style="font-size: 24px" spin />}*/}
+                {/*  spinning={true}*/}
+                {/*  class={[*/}
+                {/*    `${prefixCls}-image`,*/}
+                {/*    {*/}
+                {/*      hidden: imgState.status !== StatueEnum.LOADING,*/}
+                {/*    },*/}
+                {/*  ]}*/}
+                {/*/>*/}
+                <img
+                  style={unref(getImageStyle)}
+                  class={[`${prefixCls}-image`, imgState.status === StatueEnum.DONE ? '' : 'hidden']}
+                  ref={imgElRef}
+                  src={imgState.currentUrl}
+                  onMousedown={handleAddMoveListener}
+                />
+                {renderClose()}
+                {renderIndex()}
+                {renderController()}
+                {renderArrow('left')}
+                {renderArrow('right')}
+              </div>
             </div>
-          </div>
+          )
         )
-      )
+      }
     }
   }
 })
