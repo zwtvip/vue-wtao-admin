@@ -1,5 +1,5 @@
 <script lang="tsx">
-import { defineComponent, ref, unref, computed, reactive, watchEffect } from 'vue'
+import { defineComponent, ref, unref, computed, reactive, watchEffect, CSSProperties } from 'vue'
 import { Modal } from 'ant-design-vue'
 import { CloseOutlined, LeftOutlined, RightOutlined } from '@ant-design/icons-vue'
 import 'vue-cropper/dist/index.css'
@@ -10,6 +10,8 @@ import scaleSvg from '@/assets/svg/preview/scale.svg'
 import unScaleSvg from '@/assets/svg/preview/unscale.svg'
 import unRotateSvg from '@/assets/svg/preview/unrotate.svg'
 import editSvg from '@/assets/svg/preview/edit.svg'
+import { toRefs } from 'vue'
+import { func } from 'vue-types'
 
 enum StatueEnum {
   LOADING,
@@ -29,6 +31,16 @@ interface ImgState {
   show: boolean
   visible: boolean
 }
+
+interface PreviewsState {
+  w: number | string
+  h: number | string
+  url: string
+  img?: CSSProperties
+  div?: CSSProperties
+  html?: string
+}
+
 const props = {
   show: {
     type: Boolean as PropType<boolean>,
@@ -81,6 +93,14 @@ export default defineComponent({
       moveY: 0,
       show: props.show,
       visible: false
+    })
+
+    const state = reactive({
+      previews: {
+        w: 0,
+        h: 0,
+        url: ''
+      } as PreviewsState
     })
 
     const wrapElRef = ref<HTMLDivElement | null>(null)
@@ -165,6 +185,12 @@ export default defineComponent({
       imgState.imgRotate += deg
     }
 
+    // 编辑图片
+    function edit() {
+      imgState.show = false
+      imgState.visible = true
+    }
+
     // 鼠标事件
     function handleMouseUp() {
       const imgEl = unref(imgElRef)
@@ -243,15 +269,14 @@ export default defineComponent({
       document.ondragstart = null
     }
 
+    function closeModal() {
+      imgState.visible = false
+      imgState.show = true
+    }
+
     // 图片复原
     function resume() {
       initState()
-    }
-
-    // 图片编辑
-    function edit() {
-      imgState.show = false
-      imgState.visible = true
     }
 
     // 下载截图
@@ -267,9 +292,10 @@ export default defineComponent({
       }
     }
 
-    function closeModal() {
-      imgState.show = true
-      imgState.visible = false
+    // 获取实时预览数据
+    function realTime(data) {
+      state.previews = data
+      console.log(data)
     }
 
     expose({
@@ -381,25 +407,39 @@ export default defineComponent({
       return (
         <Modal
           title="图片编辑"
-          visible={imgState.visible}
-          width={props.defaultWidth}
+          visible={!imgState.show}
+          width={'50%'}
           maskClosable={false}
           onCancel={closeModal}
           okText={'下载截图'}
           cancelText={'取消'}
           onOk={downloadImg}
         >
-          <div style={{ width: '100%', height: '500px' }}>
-            <VueCropper
-              ref={cropperRef}
-              img={imgState.currentUrl}
-              info
-              centerBox
-              autoCrop
-              outputType={'png'}
-              autoCropWidth={150}
-              autoCropHeight={150}
-            ></VueCropper>
+          <div class={`${prefixCls}__edit`}>
+            <div class={`${prefixCls}__edit-cropper`}>
+              <VueCropper
+                ref={cropperRef}
+                img={imgState.currentUrl}
+                outputSize={1}
+                outputType={'png'}
+                full={false}
+                canMove={false}
+                fixedBox={false}
+                original={false}
+                autoCropWidth={150}
+                autoCropHeight={150}
+                canMoveBox
+                autoCrop
+                canScale
+                centerBox
+                onRealTime={realTime}
+              ></VueCropper>
+            </div>
+            <div class={`${prefixCls}__edit-preview`} style={{ width: state.previews.w + 'px', height: state.previews.h + 'px' }}>
+              <div style={state.previews.div}>
+                <img src={state.previews.url} style={state.previews.img} />
+              </div>
+            </div>
           </div>
         </Modal>
       )
@@ -447,34 +487,32 @@ export default defineComponent({
       }
       if (imgState.show) {
         return (
-          imgState.show && (
-            <div class={prefixCls} ref={wrapElRef} onMouseup={handleMouseUp} onClick={handleMaskClick}>
-              <div class={`${prefixCls}-content`}>
-                {/*<Spin*/}
-                {/*  indicator={<LoadingOutlined style="font-size: 24px" spin />}*/}
-                {/*  spinning={true}*/}
-                {/*  class={[*/}
-                {/*    `${prefixCls}-image`,*/}
-                {/*    {*/}
-                {/*      hidden: imgState.status !== StatueEnum.LOADING,*/}
-                {/*    },*/}
-                {/*  ]}*/}
-                {/*/>*/}
-                <img
-                  style={unref(getImageStyle)}
-                  class={[`${prefixCls}-image`, imgState.status === StatueEnum.DONE ? '' : 'hidden']}
-                  ref={imgElRef}
-                  src={imgState.currentUrl}
-                  onMousedown={handleAddMoveListener}
-                />
-                {renderClose()}
-                {renderIndex()}
-                {renderController()}
-                {renderArrow('left')}
-                {renderArrow('right')}
-              </div>
+          <div class={prefixCls} ref={wrapElRef} onMouseup={handleMouseUp} onClick={handleMaskClick}>
+            <div class={`${prefixCls}-content`}>
+              {/*<Spin*/}
+              {/*  indicator={<LoadingOutlined style="font-size: 24px" spin />}*/}
+              {/*  spinning={true}*/}
+              {/*  class={[*/}
+              {/*    `${prefixCls}-image`,*/}
+              {/*    {*/}
+              {/*      hidden: imgState.status !== StatueEnum.LOADING,*/}
+              {/*    },*/}
+              {/*  ]}*/}
+              {/*/>*/}
+              <img
+                style={unref(getImageStyle)}
+                class={[`${prefixCls}-image`, imgState.status === StatueEnum.DONE ? '' : 'hidden']}
+                ref={imgElRef}
+                src={imgState.currentUrl}
+                onMousedown={handleAddMoveListener}
+              />
+              {renderClose()}
+              {renderIndex()}
+              {renderController()}
+              {renderArrow('left')}
+              {renderArrow('right')}
             </div>
-          )
+          </div>
         )
       }
     }
@@ -537,6 +575,26 @@ export default defineComponent({
     background: rgb(109 109 109 / 60%);
     border-radius: 15px;
     transform: translateX(-50%);
+  }
+
+  &__edit {
+    display: flex;
+    width: 100%;
+    height: 500px;
+
+    &-cropper {
+      width: 70%;
+      height: 100%;
+    }
+
+    &-preview {
+      margin: 10px;
+      overflow: hidden;
+
+      img {
+        max-width: none;
+      }
+    }
   }
 
   &__controller {
