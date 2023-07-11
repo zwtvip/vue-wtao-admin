@@ -16,6 +16,36 @@ export const mainOutRoutes: AppRouteModule[] = [
       title: 'MainOut',
       ignoreAuth: true
     }
+  },
+  {
+    path: '/screen',
+    name: 'Screen',
+    component: () => import('@/views/screen/index.vue'),
+    redirect: '/screen/view',
+    meta: {
+      title: '大屏',
+      ignoreAuth: true
+    },
+    children: [
+      {
+        path: 'view',
+        name: 'View',
+        component: () => import('@/views/screen/content/components/View.vue'),
+        meta: {
+          title: '大屏预览',
+          ignoreAuth: true
+        }
+      },
+      {
+        path: 'manage',
+        name: 'Manage',
+        component: () => import('@/views/screen/content/components/Manage.vue'),
+        meta: {
+          title: '大屏管理',
+          ignoreAuth: true
+        }
+      }
+    ]
   }
 ]
 

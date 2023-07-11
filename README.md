@@ -1,6 +1,6 @@
 <div align="center"> <a href="https://github.com/zwtvip/vue-wtao-admin"> <img alt="VbenAdmin Logo" width="200" height="200" src="https://anncwb.github.io/anncwb/images/logo.png"> </a> <br> <br>
 
-[![license](https://img.shields.io/github/license/zwtvip/vue-vben-admin.svg)](LICENSE)
+[![license](https://img.shields.io/github/license/anncwb/vue-vben-admin.svg)](LICENSE)
 
 </div>
 

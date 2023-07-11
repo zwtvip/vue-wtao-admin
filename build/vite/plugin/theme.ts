@@ -1,6 +1,6 @@
 /**
  * Vite plugin for website theme color switching
- * https://github.com/xingyuv/vite-plugin-theme
+ * https://github.com/zwtvip/vite-plugin-theme
  */
 import type { PluginOption } from 'vite'
 import path from 'path'

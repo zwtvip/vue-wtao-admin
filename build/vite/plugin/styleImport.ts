@@ -1,6 +1,6 @@
 /**
  *  Introduces component library styles on demand.
- * https://github.com/xingyuv/vite-vue-plugin-style-import
+ * https://github.com/zwtvip/vite-vue-plugin-style-import
  */
 import { createStyleImportPlugin } from 'vite-plugin-style-import'
 
