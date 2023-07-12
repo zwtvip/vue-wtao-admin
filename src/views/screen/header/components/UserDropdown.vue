@@ -11,11 +11,7 @@
 
     <template #overlay>
       <a-menu @click="handleMenuClick">
-        <MenuItem
-          key="edit"
-          :text="currentRoute.name === 'ScreenManage' ? '查看主题' : '编辑主题'"
-          icon="ant-design:credit-card-outlined"
-        />
+        <MenuItem key="edit" :text="currentRoute.name === 'Manage' ? '查看大屏' : '编辑大屏'" icon="ant-design:credit-card-outlined" />
         <MenuDivider />
         <MenuItem v-if="getUseLockPage" key="lock" :text="t('layout.header.tooltipLock')" icon="ion:lock-closed-outline" />
         <MenuItem key="logout" :text="t('layout.header.dropdownItemLoginOut')" icon="ion:power-outline" />
@@ -40,7 +36,7 @@ import { propTypes } from '@/utils/propTypes'
 
 import { createAsyncComponent } from '@/utils/factory/createAsyncComponent'
 
-type MenuEvent = 'logout' | 'list' | 'lock'
+type MenuEvent = 'logout' | 'edit' | 'lock'
 
 export default defineComponent({
   name: 'UserDropdown',
@@ -79,10 +75,10 @@ export default defineComponent({
 
     // 页面切换
     function changeScreenPage() {
-      if (currentRoute.value.name === 'ThemeList') {
-        push('/screen/cardList')
+      if (currentRoute.value.name === 'View') {
+        push('/screen/manage')
       } else {
-        push('/screen/themeList')
+        push('/screen/view')
       }
     }
 

@@ -25,6 +25,15 @@ export const APP_LOCAL_CACHE_KEY = 'COMMON__LOCAL__KEY__'
 // base global session key
 export const APP_SESSION_CACHE_KEY = 'COMMON__SESSION__KEY__'
 
+// 模块列表 key
+export const MODULE_LIST_KEY = 'MODULE__LIST__'
+
+// 卡片列表 key
+export const CARD_LIST_KEY = 'CARD__LIST__'
+
+// 临时卡片列表 key
+export const TEMP_CARD_LIST_KEY = 'TEMP_CARD__LIST__'
+
 export enum CacheTypeEnum {
   SESSION,
   LOCAL

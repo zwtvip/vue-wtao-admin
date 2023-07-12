@@ -12,9 +12,10 @@ Object.keys(modules).forEach((key) => {
   moduleList.push({
     moduleId: buildUUID(),
     [modName]: mod, // 组件
-    moduleName: modName // 组件名称
+    moduleName: modName.split('-')[0], // 组件名称
+    fileName: modName.split('-')[1] // 文件名称
   })
-  compInfo[modName] = mod
+  compInfo[modName.split('-')[0]] = mod
 })
 
 export { moduleList, compInfo }

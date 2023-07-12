@@ -8,6 +8,7 @@
         :actionColOptions="{ span: 24 }"
         @submit="handleSubmit"
         @reset="handleReset"
+        @field-value-change="onFieldValueChange"
       >
         <template #selectA="{ model, field }">
           <Select :options="optionsA" mode="multiple" v-model:value="model[field]" @change="valueSelectA = model[field]" allowClear />
@@ -58,7 +59,6 @@ import { cloneDeep } from 'lodash-es'
 import { areaRecord } from '@/api/demo/cascader'
 import { isArray } from '@/utils/is'
 import { uploadApi } from '@/api/sys/upload'
-import { resolve } from 'path'
 
 const valueSelectA = ref<string[]>([])
 const valueSelectB = ref<string[]>([])
@@ -77,6 +77,10 @@ const optionsB = computed(() => {
     return op
   })
 })
+
+const onFieldValueChange = (key) => {
+  console.log(key)
+}
 
 const provincesOptions = [
   {

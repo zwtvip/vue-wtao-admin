@@ -17,10 +17,15 @@ import { createAsyncComponent } from '@/utils/factory/createAsyncComponent'
 import ParticlesFeatures from './feature/index.vue'
 import LayoutHeader from './header/index.vue'
 import LayoutContent from './content/index.vue'
+import { onMounted } from 'vue'
 
 const LayoutFeatures = createAsyncComponent(() => import('@/layouts/default/feature/index.vue'))
 const { prefixCls } = useDesign('screen-layout')
 const lockEvents = useLockPage()
+
+onMounted(() => {
+  document.getElementById(`htmlRoot`)?.setAttribute('data-screen-theme', 'blueDark')
+})
 </script>
 
 <style lang="less">

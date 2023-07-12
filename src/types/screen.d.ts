@@ -4,6 +4,7 @@ import { Component } from 'vue'
 export interface ModuleInfo {
   moduleId: string
   moduleName: string
+  fileName: sting
   [key: string]: Component | string | boolean
 }
 
@@ -11,6 +12,7 @@ export interface ModuleInfo {
 export interface CardInfo {
   cardId: string
   cardName: string
+  moduleName: string
   x: number
   y: number
   h: number
