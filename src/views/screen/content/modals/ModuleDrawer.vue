@@ -80,13 +80,13 @@ async function handleSubmit() {
 }
 
 // 卡片操作
-async function fetch(p = {}) {
-  const res = await screenStore.getCardListData({
-    page: page.value,
-    pageSize: pageSize.value,
-    ...p
-  })
-  total.value = res.total
+async function fetch() {
+  // const res = await screenStore.getCardListData({
+  //   page: page.value,
+  //   pageSize: pageSize.value,
+  //   ...p
+  // })
+  // total.value = res.total
 }
 
 function handleChange(e: any, item) {
@@ -99,17 +99,17 @@ function handleChange(e: any, item) {
   }
 }
 
-//分页相关
+// 分页相关
 const page = ref(1)
 const pageSize = ref(12)
 const total = ref(moduleList.length)
 const pagination = ref({
   showSizeChanger: false,
-  showQuickJumper: true,
+  showQuickJumper: false,
   pageSize,
   current: page,
   total,
-  showTotal: (total) => `总 ${total} 条`,
+  showTotal: (total) => `总共 ${total} 条`,
   onChange: pageChange,
   onShowSizeChange: pageSizeChange
 })

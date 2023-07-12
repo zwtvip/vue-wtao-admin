@@ -74,27 +74,29 @@
         @drag-end="dragEnd"
         @resize-end="resizeEnd"
       >
-        <Card :hoverable="true" :bordered="false" :class="`${prefixCls}-card`">
-          <template #title>
-            <a-input v-model:value="item.cardName" :bordered="false" placeholder="请输入卡片标题" />
-          </template>
-          <template #extra>
-            <div :class="`${prefixCls}-card-extra`">
-              <Tooltip title="编辑卡片">
-                <EditOutlined @click="handleEdit(item)" />
-              </Tooltip>
-              <Tooltip title="重置卡片">
-                <RedoOutlined class="mx-4" @click="handleReset(item)" />
-              </Tooltip>
-              <Tooltip title="删除卡片">
-                <Popconfirm title="是否删除卡片?" ok-text="是" cancel-text="否" @confirm="handleDelete(item.cardId)">
-                  <DeleteOutlined v-if="cardList.length > 1" />
-                </Popconfirm>
-              </Tooltip>
-            </div>
-          </template>
-          <component :is="compInfo[item.moduleName]" :record="item" :class="`${prefixCls}-module`" />
-        </Card>
+        <BorderAnimation>
+          <Card :hoverable="true" :bordered="false" :class="`${prefixCls}-card`">
+            <template #title>
+              <a-input v-model:value="item.cardName" :bordered="false" placeholder="请输入卡片标题" />
+            </template>
+            <template #extra>
+              <div :class="`${prefixCls}-card-extra`">
+                <Tooltip title="编辑卡片">
+                  <EditOutlined @click="handleEdit(item)" />
+                </Tooltip>
+                <Tooltip title="重置卡片">
+                  <RedoOutlined class="mx-4" @click="handleReset(item)" />
+                </Tooltip>
+                <Tooltip title="删除卡片">
+                  <Popconfirm title="是否删除卡片?" ok-text="是" cancel-text="否" @confirm="handleDelete(item.cardId)">
+                    <DeleteOutlined v-if="cardList.length > 1" />
+                  </Popconfirm>
+                </Tooltip>
+              </div>
+            </template>
+            <component :is="compInfo[item.moduleName]" :record="item" :class="`${prefixCls}-module`" />
+          </Card>
+        </BorderAnimation>
       </Vue3DraggableResizable>
     </DraggableContainer>
     <ModuleDrawer @register="registerDrawer" @success="handleSuccess" />
@@ -105,9 +107,9 @@
 import { ref, watch, onMounted } from 'vue'
 import { Card, Tooltip, Popconfirm } from 'ant-design-vue'
 import { EditOutlined, DeleteOutlined, RedoOutlined } from '@ant-design/icons-vue'
-import { DraggableContainer } from 'vue3-draggable-resizable'
-import Vue3DraggableResizable from 'vue3-draggable-resizable'
+import Vue3DraggableResizable, { DraggableContainer } from 'vue3-draggable-resizable'
 import 'vue3-draggable-resizable/dist/Vue3DraggableResizable.css'
+import { BorderAnimation } from '@/components/BorderAnimation'
 import { useDesign } from '@/hooks/web/useDesign'
 import { buildUUID } from '@/utils/uuid'
 import { useMessage } from '@/hooks/web/useMessage'
@@ -179,7 +181,6 @@ function handleSuccess(cardInfo) {
   cardList.value.forEach((item) => {
     if (cardInfo.cardId === item.cardId) {
       item.cardName = cardInfo.cardName
-      item.filename = cardInfo.filename
     }
   })
 }

@@ -5,6 +5,7 @@ export interface ModuleInfo {
   moduleId: string
   moduleName: string
   fileName: sting
+  checked: boolean
   [key: string]: Component | string | boolean
 }
 
