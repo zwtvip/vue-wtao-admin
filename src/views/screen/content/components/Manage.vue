@@ -77,7 +77,7 @@
         <BorderAnimation>
           <Card :hoverable="true" :bordered="false" :class="`${prefixCls}-card`">
             <template #title>
-              <a-input v-model:value="item.cardName" :bordered="false" placeholder="请输入卡片标题" />
+              <a-input v-model:value="item.cardName" :bordered="false" size="small" placeholder="请输入卡片标题" />
             </template>
             <template #extra>
               <div :class="`${prefixCls}-card-extra`">
@@ -273,7 +273,7 @@ onMounted(() => {
       padding: 0;
       background: transparent;
       overflow: hidden;
-      height: calc(100% - 62px);
+      height: calc(100% - @screen-card-header-height);
     }
   }
 

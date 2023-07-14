@@ -109,6 +109,7 @@ const pagination = ref({
   pageSize,
   current: page,
   total,
+  size: 'small',
   showTotal: (total) => `总共 ${total} 条`,
   onChange: pageChange,
   onShowSizeChange: pageSizeChange

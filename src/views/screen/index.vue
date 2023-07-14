@@ -24,7 +24,7 @@ const { prefixCls } = useDesign('screen-layout')
 const lockEvents = useLockPage()
 
 onMounted(() => {
-  document.getElementById(`htmlRoot`)?.setAttribute('data-screen-theme', 'blueDark')
+  document.getElementById(`htmlRoot`)?.setAttribute('data-theme-screen', 'blueDark')
 })
 </script>
 

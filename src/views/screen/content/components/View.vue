@@ -21,13 +21,13 @@
 </template>
 
 <script lang="ts" setup name="ScreenView">
+import { onMounted } from 'vue'
 import Vue3DraggableResizable, { DraggableContainer } from 'vue3-draggable-resizable'
 import 'vue3-draggable-resizable/dist/Vue3DraggableResizable.css'
 import { BorderAnimation } from '@/components/BorderAnimation'
 import { useDesign } from '@/hooks/web/useDesign'
 import { useScreenStore } from '@/store/modules/screen'
 import { compInfo } from '../../data'
-import { onMounted } from 'vue'
 
 const { prefixCls } = useDesign('screen-view')
 const screenStore = useScreenStore()
@@ -43,7 +43,7 @@ onMounted(() => {
       const body: HTMLElement | null = cardEl.querySelector('.ant-card-body')
       if (body) {
         if (head) {
-          body.style.height = 'calc(100% - 57px)'
+          body.style.height = `calc(100% - ${window.getComputedStyle(head).height})`
         } else {
           body.style.height = '100%'
         }
