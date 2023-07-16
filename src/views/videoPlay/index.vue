@@ -18,6 +18,7 @@
           :resizable="false"
           :active="item.active"
           @activated="activated(item, index)"
+          @deactivated="deactivated(item)"
           @dblclick="dblClick(item, index)"
         >
           <VideoPlay :record="item" />
@@ -28,7 +29,7 @@
 </template>
 
 <script lang="ts" setup name="VideoPlay">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, nextTick } from 'vue'
 import Vue3DraggableResizable from 'vue3-draggable-resizable'
 import 'vue3-draggable-resizable/dist/Vue3DraggableResizable.css'
 import { PageWrapper } from '@/components/Page'
@@ -54,6 +55,17 @@ function onSplit(split) {
 const activated = (item, index) => {
   item.active = true
   currentIndex.value = index
+}
+
+const deactivated = (item) => {
+  if (item.w === width && item.h === height) {
+    nextTick(() => {
+      const active: HTMLElement | null = document.querySelector(`.parent .draggable:nth-child(${item.index + 1})`)
+      active?.classList.add('active')
+    })
+  } else {
+    item.active = false
+  }
 }
 
 const dblClick = (item, index) => {
