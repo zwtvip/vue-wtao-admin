@@ -10,8 +10,6 @@ import scaleSvg from '@/assets/svg/preview/scale.svg'
 import unScaleSvg from '@/assets/svg/preview/unscale.svg'
 import unRotateSvg from '@/assets/svg/preview/unrotate.svg'
 import editSvg from '@/assets/svg/preview/edit.svg'
-import { toRefs } from 'vue'
-import { func } from 'vue-types'
 
 enum StatueEnum {
   LOADING,

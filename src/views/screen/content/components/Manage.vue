@@ -137,6 +137,7 @@ const activated = (item, index) => {
 }
 const deactivated = (item) => {
   item.active = false
+  currentIndex.value = -1
 }
 const dragEnd = ({ x, y }) => {
   cardList.value.forEach((item) => {
@@ -156,6 +157,7 @@ const resizeEnd = ({ x, y, w, h }) => {
     }
   })
 }
+
 function handleReset(record: Recordable) {
   cardList.value.forEach((item, index) => {
     if (record.cardId === item.cardId) {

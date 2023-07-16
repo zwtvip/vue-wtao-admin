@@ -18,6 +18,15 @@ export const mainOutRoutes: AppRouteModule[] = [
     }
   },
   {
+    path: '/video-play',
+    name: 'videoPlay',
+    component: () => import('@/views/videoPlay/index.vue'),
+    meta: {
+      title: 'VideoPlay',
+      ignoreAuth: true
+    }
+  },
+  {
     path: '/screen',
     name: 'Screen',
     component: () => import('@/views/screen/index.vue'),
