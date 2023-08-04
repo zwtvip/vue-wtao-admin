@@ -1,6 +1,7 @@
 import { DescItem } from '@/components/Description'
 import { BasicColumn } from '@/components/Table/src/types/table'
 import { Button } from '@/components/Button'
+import { EllipsisText } from '@/components/EllipsisText'
 
 import { Badge } from 'ant-design-vue'
 
@@ -15,7 +16,7 @@ export const personData = {
   b1: '付小小',
   b2: '18100000000',
   b3: '菜鸟仓储',
-  b4: '浙江省杭州市西湖区万塘路18号',
+  b4: <EllipsisText length={6} tooltip text={'浙江省杭州市西湖区万塘路18号'}></EllipsisText>,
   b5: '无'
 }
 export const refundSchema: DescItem[] = [
