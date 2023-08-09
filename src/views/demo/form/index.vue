@@ -329,6 +329,33 @@ const schemas: FormSchema[] = [
     renderComponentContent: 'Check'
   },
   {
+    field: 'field88',
+    component: 'AllCheckboxGroup',
+    label: '字段88',
+    componentProps: {
+      options: [
+        {
+          label: 'Apple',
+          value: 'Apple'
+        },
+        {
+          label: 'Pear',
+          value: 'Pear'
+        },
+        {
+          label: 'Orange',
+          value: 'Orange'
+        }
+      ],
+      onChange: (value) => {
+        console.log('AllCheckboxGroup====>:', value)
+      }
+    },
+    colProps: {
+      span: 8
+    }
+  },
+  {
     field: 'field9',
     component: 'Switch',
     label: '字段9',
