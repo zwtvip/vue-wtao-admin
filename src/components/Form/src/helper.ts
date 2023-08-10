@@ -38,7 +38,7 @@ function genType() {
 export function setComponentRuleType(rule: Rule, component: ComponentType, valueFormat: string) {
   if (DATE_TYPE.includes(component)) {
     rule.type = valueFormat ? 'string' : 'object'
-  } else if (['RangePicker', 'Upload', 'CheckboxGroup', 'TimePicker'].includes(component)) {
+  } else if (['RangePicker', 'Upload', 'CheckboxGroup', 'AllCheckboxGroup', 'TimePicker'].includes(component)) {
     rule.type = 'array'
   } else if (['InputNumber'].includes(component)) {
     rule.type = 'number'
@@ -81,5 +81,6 @@ export const NO_AUTO_LINK_COMPONENTS: ComponentType[] = [
   'ApiRadioGroup',
   'ApiCascader',
   'AutoComplete',
-  'RadioButtonGroup'
+  'RadioButtonGroup',
+  'AllCheckboxGroup'
 ]
