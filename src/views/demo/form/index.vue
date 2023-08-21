@@ -551,7 +551,7 @@ const schemas: FormSchema[] = [
           ])
         })
       },
-      isAsync: true,
+      async: true,
       onChange: (e, v) => {
         console.log('ApiTreeSelect====>:', e, v)
       }

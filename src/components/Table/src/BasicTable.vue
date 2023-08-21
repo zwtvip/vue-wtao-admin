@@ -29,13 +29,9 @@
       <template #headerCell="{ column }">
         <HeaderCell :column="column" />
       </template>
-      <!-- 增加对antdv3.x兼容 -->
       <template #bodyCell="data">
         <slot name="bodyCell" v-bind="data || {}"></slot>
       </template>
-      <!--      <template #[`header-${column.dataIndex}`] v-for="(column, index) in columns" :key="index">-->
-      <!--        <HeaderCell :column="column" />-->
-      <!--      </template>-->
     </Table>
   </div>
 </template>
@@ -44,7 +40,7 @@ import type { BasicTableProps, TableActionType, SizeType, ColumnChangeParam } fr
 import { ref, computed, unref, toRaw, inject, watchEffect, useAttrs, useSlots } from 'vue'
 import { Table } from 'ant-design-vue'
 import { BasicForm, useForm } from '@/components/Form'
-import { PageWrapperFixedHeightKey } from '@/components/Page'
+import { PageWrapperFixedHeightKey } from '@/enums/pageEnum'
 import HeaderCell from './components/HeaderCell.vue'
 import { InnerHandlers } from './types/table'
 import { usePagination } from './hooks/usePagination'

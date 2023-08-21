@@ -1,5 +1,5 @@
 <template>
-  <TreeSelect v-bind="getAttrs" :load-data="isAsync ? onLoadData : undefined" @change="handleChange">
+  <TreeSelect v-bind="getAttrs" :load-data="async ? onLoadData : undefined" @change="handleChange">
     <template #[item]="data" v-for="item in Object.keys($slots)">
       <slot :name="item" v-bind="data || {}"></slot>
     </template>
@@ -20,7 +20,7 @@ const props = defineProps({
   api: { type: Function as PropType<(arg?: Recordable) => Promise<Recordable>> },
   params: { type: Object },
   immediate: { type: Boolean, default: true },
-  isAsync: { type: Boolean, default: false },
+  async: { type: Boolean, default: false },
   resultField: propTypes.string.def('')
 })
 const emit = defineEmits(['options-change', 'change'])
