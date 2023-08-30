@@ -40,7 +40,6 @@ const [registerTable, { getForm }] = useTable({
   rowKey: 'id',
   rowSelection: {
     type: 'checkbox',
-    selectedRowKeys: checkedKeys.value,
     onSelect: onSelect,
     onSelectAll: onSelectAll
   }

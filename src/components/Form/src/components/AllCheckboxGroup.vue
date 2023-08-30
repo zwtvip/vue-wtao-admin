@@ -1,5 +1,5 @@
 <!--
- * @Description:It is troublesome to implement radio button group in the form. So it is extracted independently as a separate component
+ * @Description:It is troublesome to implement all checkbox group in the form. So it is extracted independently as a separate component
 -->
 <template>
   <div>
@@ -40,12 +40,11 @@ const attrs = useAttrs()
 const emitData = ref<any[]>([])
 // Embedded in the form, just use the hook binding to perform form verification
 const [state] = useRuleFormItem(props, 'value', 'change', emitData)
-console.log(state)
 
 const data = reactive({
   indeterminate: false,
   checkAll: false,
-  checkedList: [] as (number | string | boolean)[]
+  checkedList: emitData.value
 })
 // Processing options value
 const getOptions = computed((): OptionsItem[] => {
@@ -72,8 +71,14 @@ watch(
     emits('change', emitData.value)
   },
   {
-    immediate: true,
     deep: true
+  }
+)
+
+watch(
+  () => state.value,
+  (val) => {
+    data.checkedList = val
   }
 )
 

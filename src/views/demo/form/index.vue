@@ -78,9 +78,7 @@ const optionsB = computed(() => {
   })
 })
 
-const onFieldValueChange = (key) => {
-  console.log(key)
-}
+const onFieldValueChange = () => {}
 
 const provincesOptions = [
   {
@@ -152,9 +150,7 @@ const schemas: FormSchema[] = [
     },
     // componentProps:{},
     // can func
-    componentProps: ({ schema, formModel }) => {
-      console.log('form:', schema)
-      console.log('formModel:', formModel)
+    componentProps: () => {
       return {
         placeholder: '自定义placeholder',
         onChange: (e: any) => {
@@ -286,6 +282,7 @@ const schemas: FormSchema[] = [
     colProps: {
       span: 8
     },
+    defaultValue: ['1'],
     componentProps: {
       options: [
         {
@@ -332,6 +329,7 @@ const schemas: FormSchema[] = [
     field: 'field88',
     component: 'AllCheckboxGroup',
     label: '字段88',
+    defaultValue: ['Apple'],
     componentProps: {
       options: [
         {
@@ -457,12 +455,12 @@ const schemas: FormSchema[] = [
       valueField: 'id',
       // not request untill to select
       immediate: true,
-      onChange: (e, v) => {
-        console.log('ApiSelect====>:', e, v)
+      onChange: () => {
+        // console.log('ApiSelect====>:', e, v)
       },
       // atfer request callback
-      onOptionsChange: (options) => {
-        console.log('get options', options.length, options)
+      onOptionsChange: () => {
+        // console.log('get options', options.length, options)
       }
     },
     colProps: {
@@ -553,7 +551,7 @@ const schemas: FormSchema[] = [
           ])
         })
       },
-      isAsync: true,
+      async: true,
       onChange: (e, v) => {
         console.log('ApiTreeSelect====>:', e, v)
       }
@@ -729,8 +727,8 @@ const schemas: FormSchema[] = [
           value: '30天'
         }
       ],
-      onChange(value, date) {
-        console.log(value, date)
+      onChange() {
+        // console.log(value, date)
       }
     },
     colProps: {
