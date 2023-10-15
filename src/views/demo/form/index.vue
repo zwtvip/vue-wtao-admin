@@ -2,6 +2,7 @@
   <PageWrapper title="表单基础示例" contentFullHeight>
     <CollapseContainer title="基础示例">
       <BasicForm
+        @register="registerForm"
         autoFocusFirstItem
         :labelWidth="200"
         :schemas="schemas"
@@ -45,12 +46,12 @@
   </PageWrapper>
 </template>
 <script lang="ts" setup>
-import { computed, unref, ref } from 'vue'
-import { BasicForm, FormSchema, ApiSelect } from '@/components/Form'
+import { computed, unref, ref, onMounted } from 'vue'
+import { BasicForm, useForm, FormSchema, ApiSelect } from '@/components/Form'
 import { CollapseContainer } from '@/components/Container'
 import { useMessage } from '@/hooks/web/useMessage'
 import { PageWrapper } from '@/components/Page'
-
+import dayjs from 'dayjs'
 import { optionsListApi } from '@/api/demo/select'
 import { useDebounceFn } from '@vueuse/core'
 import { treeOptionsListApi } from '@/api/demo/tree'
@@ -79,6 +80,13 @@ const optionsB = computed(() => {
 })
 
 const onFieldValueChange = () => {}
+
+const [registerForm, { getFieldsValue }] = useForm({
+  fieldMapToTime: [
+    ['rangeTime', ['startTime', 'endTime'], 'YYYY-MM-DD HH:mm:ss'],
+    ['rangeTime1', ['startDate', 'endDate'], 'YYYY-MM-DD HH:mm:ss']
+  ]
+})
 
 const provincesOptions = [
   {
@@ -745,13 +753,33 @@ const schemas: FormSchema[] = [
     }
   },
   {
-    field: '[startTime, endTime]',
+    field: 'rangeTime',
     label: '时间范围',
     component: 'RangePicker',
+    defaultValue: [dayjs().subtract(1, 'month').format('YYYY-MM-DD HH:mm:ss'), dayjs().format('YYYY-MM-DD HH:mm:ss')],
     componentProps: {
       format: 'YYYY-MM-DD HH:mm:ss',
+      valueFormat: 'YYYY-MM-DD HH:mm:ss',
       placeholder: ['开始时间', '结束时间'],
-      showTime: { format: 'HH:mm:ss' }
+      showTime: {
+        defaultValue: [dayjs('00:00:00', 'HH:mm:ss'), dayjs('23:59:59', 'HH:mm:ss')],
+        format: 'HH:mm:ss'
+      }
+    }
+  },
+  {
+    field: 'rangeTime1',
+    label: '时间范围',
+    component: 'RangePicker',
+    defaultValue: [dayjs().subtract(1, 'month').format('YYYY-MM-DD 00:00:00'), dayjs().format('YYYY-MM-DD 23:59:59')],
+    componentProps: {
+      format: 'YYYY-MM-DD HH:mm:ss',
+      valueFormat: 'YYYY-MM-DD HH:mm:ss',
+      placeholder: ['开始时间', '结束时间'],
+      showTime: {
+        defaultValue: [dayjs('00:00:00', 'HH:mm:ss'), dayjs('23:59:59', 'HH:mm:ss')],
+        format: 'HH:mm:ss'
+      }
     }
   },
   {
@@ -819,4 +847,7 @@ function handleSubmit(values: any) {
   console.log('values', values)
   createMessage.success('click search,values:' + JSON.stringify(values))
 }
+onMounted(() => {
+  console.log(getFieldsValue())
+})
 </script>

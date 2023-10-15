@@ -2,16 +2,23 @@ import { TreeItem } from '@/components/Tree'
 
 export const treeData: TreeItem[] = [
   {
-    title: 'parent ',
+    title: 'parent 1',
     key: '0-0',
     children: [
-      { title: 'leaf', key: '0-0-0' },
+      { title: 'leaf 1', key: '0-0-0' },
       {
-        title: 'leaf',
+        title: 'leaf 2',
         key: '0-0-1',
         children: [
-          { title: 'leaf', key: '0-0-0-0', children: [{ title: 'leaf', key: '0-0-0-0-1' }] },
-          { title: 'leaf', key: '0-0-0-1' }
+          {
+            title: 'leaf 2-1',
+            key: '0-0-0-0',
+            children: [
+              { title: 'leaf 2-1-1', key: '0-0-0-0-1' },
+              { title: 'leaf 2-1-2', key: '0-0-0-0-2' }
+            ]
+          },
+          { title: 'leaf 2-2', key: '0-0-0-1' }
         ]
       }
     ]
