@@ -1,39 +1,45 @@
 <template>
-  <Upload
-    v-model:file-list="fileList"
-    name="avatar"
-    list-type="picture-card"
-    class="avatar-uploader"
-    :accept="getStringAccept"
-    :show-upload-list="false"
-    :before-upload="beforeUpload"
-    :custom-request="customRequest"
-  >
-    <img v-if="imageUrl" :src="imageUrl" alt="avatar" />
-    <div v-else>
-      <loading-outlined v-if="loading" />
-      <plus-outlined v-else />
-      <div class="ant-upload-text">上传图片</div>
-    </div>
-  </Upload>
+  <div>
+    <Upload
+      v-model:file-list="fileList"
+      list-type="picture-card"
+      :accept="getStringAccept"
+      :before-upload="beforeUpload"
+      :custom-request="customRequest"
+      @preview="handlePreview"
+      @remove="handleRemove"
+    >
+      <div v-if="fileList && fileList.length < maxNumber">
+        <plus-outlined />
+        <div style="margin-top: 8px">{{ t('component.upload.upload') }}</div>
+      </div>
+    </Upload>
+    <Modal :visible="previewVisible" :title="previewTitle" :footer="null" @cancel="handleCancel">
+      <img alt="" style="width: 100%" :src="previewImage" />
+    </Modal>
+  </div>
 </template>
-<script lang="ts" setup name="UploaddHead">
-import { ref, toRefs } from 'vue'
-import { PlusOutlined, LoadingOutlined } from '@ant-design/icons-vue'
-import { Upload } from 'ant-design-vue'
+
+<script lang="ts" setup name="ImageUpload">
+import { ref, toRefs, watch } from 'vue'
+import { PlusOutlined } from '@ant-design/icons-vue'
+import { Upload, Modal } from 'ant-design-vue'
 import type { UploadProps } from 'ant-design-vue'
+import { UploadRequestOption } from 'ant-design-vue/lib/vc-upload/interface'
 import { useMessage } from '@/hooks/web/useMessage'
-import { isFunction } from '@/utils/is'
+import { isArray, isFunction } from '@/utils/is'
 import { warn } from '@/utils/log'
 import { useI18n } from '@/hooks/web/useI18n'
-import { FileItem, UploadResultStatus } from '../typing'
-import { basicProps } from '../props'
 import { useUploadType } from '../useUpload'
+import { uploadContainerProps } from '../props'
+import { isImgTypeByName } from '../helper'
 
-const emit = defineEmits(['change'])
+const emit = defineEmits(['change', 'update:value', 'delete'])
 const props = defineProps({
-  ...basicProps
+  ...uploadContainerProps
 })
+const { t } = useI18n()
+const { createMessage } = useMessage()
 const { accept, helpText, maxNumber, maxSize } = toRefs(props)
 const { getStringAccept } = useUploadType({
   acceptRef: accept,
@@ -41,35 +47,91 @@ const { getStringAccept } = useUploadType({
   maxNumberRef: maxNumber,
   maxSizeRef: maxSize
 })
+const previewVisible = ref<boolean>(false)
+const previewImage = ref<string>('')
+const previewTitle = ref<string>('')
 
-const { t } = useI18n()
-const { createMessage } = useMessage()
 const fileList = ref<UploadProps['fileList']>([])
-const loading = ref<boolean>(false)
-const imageUrl = ref<string>('')
+const isLtMsg = ref<boolean>(true)
+const isActMsg = ref<boolean>(true)
 
-const beforeUpload = (file: UploadProps['fileList'][number]) => {
-  const { maxSize } = props
-  const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/jpg'
-  if (!isJpgOrPng) {
-    createMessage.error('请上传指定格式图片!')
+watch(
+  () => props.value,
+  (v) => {
+    if (isArray(v)) {
+      fileList.value = v.map((url, i) => ({
+        uid: String(-i),
+        name: url ? url.slice(url.lastIndexOf('/')) : 'image.png',
+        status: 'done',
+        url
+      }))
+    }
+  },
+  {
+    immediate: true,
+    deep: true
   }
-  // 设置最大值，则判断
-  const isLtMax = file.size / 1024 / 1024 < maxSize
-  if (!isLtMax) {
-    createMessage.error(t('component.upload.maxSizeMultiple', [maxSize]))
-  }
-  return isJpgOrPng && isLtMax
+)
+
+function getBase64(file: File) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.readAsDataURL(file)
+    reader.onload = () => resolve(reader.result)
+    reader.onerror = (error) => reject(error)
+  })
 }
-async function customRequest(info: FileItem) {
+
+const handlePreview = async (file: UploadProps['fileList'][number]) => {
+  if (!file.url && !file.preview) {
+    file.preview = (await getBase64(file.originFileObj)) as string
+  }
+  previewImage.value = file.url || file.preview
+  previewVisible.value = true
+  previewTitle.value = file.name || file.url.substring(file.url.lastIndexOf('/') + 1)
+}
+
+const handleRemove = async (file: UploadProps['fileList'][number]) => {
+  if (fileList.value) {
+    const index = fileList.value.findIndex((item: any) => item.uuid === file.uuid)
+    index !== -1 && fileList.value.splice(index, 1)
+    emit('change', fileList.value)
+    emit('delete', file)
+  }
+}
+
+const handleCancel = () => {
+  previewVisible.value = false
+  previewTitle.value = ''
+}
+
+const beforeUpload = (file: File) => {
+  const { maxSize, accept } = props
+  const { name } = file
+  isActMsg.value = isImgTypeByName(name)
+  if (!isActMsg.value) {
+    createMessage.error(t('component.upload.acceptUpload', [accept]))
+    isActMsg.value = false
+    // 防止弹出多个错误提示
+    setTimeout(() => (isActMsg.value = true), 1000)
+  }
+  isLtMsg.value = file.size / 1024 / 1024 > maxSize
+  if (isLtMsg.value) {
+    createMessage.error(t('component.upload.maxSizeMultiple', [maxSize]))
+    isLtMsg.value = false
+    // 防止弹出多个错误提示
+    setTimeout(() => (isLtMsg.value = true), 1000)
+  }
+  return (isActMsg.value && !isLtMsg.value) || Upload.LIST_IGNORE
+}
+
+async function customRequest(info: UploadRequestOption<any>) {
   const { api } = props
   if (!api || !isFunction(api)) {
     return warn('upload api must exist and be a function')
   }
   try {
-    info.status = UploadResultStatus.UPLOADING
-    loading.value = true
-    const { data } = await props.api?.({
+    const res = await props.api?.({
       data: {
         ...(props.uploadParams || {})
       },
@@ -77,43 +139,18 @@ async function customRequest(info: FileItem) {
       name: props.name,
       filename: props.filename
     })
-    info.status = UploadResultStatus.SUCCESS
-    info.responseData = data
-    imageUrl.value = data.url
-    loading.value = false
-    if (fileList.value && fileList.value?.length > 0) {
-      fileList.value[0].url = data.url
-      emit('change', fileList.value)
-    }
-    return {
-      success: true,
-      error: null
-    }
-  } catch (e) {
-    console.log(e)
-    info.status = UploadResultStatus.ERROR
-    return {
-      success: false,
-      error: e
-    }
+    info.onSuccess!(res.data)
+    emit('change', fileList.value)
+  } catch (e: any) {
+    info.onError!(e)
   }
 }
 </script>
 
 <style lang="less">
-.avatar-uploader > .ant-upload {
-  width: 128px;
-  height: 128px;
-
-  img {
-    width: 100%;
-    height: 100%;
-  }
-}
-
 .ant-upload-select-picture-card i {
-  font-size: 32px;
   color: #999;
+  font-size: 32px;
 }
 
 .ant-upload-select-picture-card .ant-upload-text {

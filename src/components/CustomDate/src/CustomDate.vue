@@ -18,7 +18,7 @@
       placeholder="请选择时间"
       :options="getOptions"
       style="width: 120px; margin-right: 10px"
-      @change="onChange"
+      @change="handleClick"
     />
   </div>
 </template>
@@ -76,6 +76,7 @@ watch(
   () => state.value,
   (v) => {
     v && handleClick(v)
+    emit('change', v, emitData.value)
   }
 )
 
@@ -84,13 +85,12 @@ function setDate(num) {
 }
 
 function handleClick(value) {
-  emitData.value = value
   switch (value) {
     case '0天':
       date.value = [dayjs().format(props.format), dayjs().format(props.format)]
       break
     case '1天':
-      emitData.value = [setDate(2), setDate(1)]
+      date.value = [setDate(2), setDate(1)]
       break
     case '3天':
       date.value = [setDate(3), setDate(1)]
@@ -110,6 +110,6 @@ function handleClick(value) {
     default:
       break
   }
-  emit('change', emitData.value, date.value)
+  emitData.value = date.value
 }
 </script>

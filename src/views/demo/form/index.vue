@@ -81,7 +81,7 @@ const optionsB = computed(() => {
 
 const onFieldValueChange = () => {}
 
-const [registerForm, { getFieldsValue }] = useForm({
+const [registerForm, { getFieldsValue, setFieldsValue }] = useForm({
   fieldMapToTime: [
     ['rangeTime', ['startTime', 'endTime'], 'YYYY-MM-DD HH:mm:ss'],
     ['rangeTime1', ['startDate', 'endDate'], 'YYYY-MM-DD HH:mm:ss']
@@ -204,8 +204,11 @@ const schemas: FormSchema[] = [
     field: 'fieldsc1',
     component: 'UploadHead',
     label: '上传图片',
-    colProps: {
-      span: 24
+    componentProps: {
+      api: uploadApi,
+      accept: ['png', 'jpeg', 'jpg'],
+      maxSize: 2,
+      maxNumber: 1
     },
     rules: [
       {
@@ -219,12 +222,7 @@ const schemas: FormSchema[] = [
           }
         }
       }
-    ],
-    componentProps: {
-      api: uploadApi,
-      accept: ['png', 'jpeg', 'png'],
-      maxSize: 2
-    }
+    ]
   },
   {
     field: 'fieldsc2',
@@ -248,7 +246,7 @@ const schemas: FormSchema[] = [
     ],
     componentProps: {
       api: uploadApi,
-      accept: ['png', 'jpeg', 'png'],
+      accept: ['png', 'jpeg', 'jpg'],
       maxSize: 2,
       maxNumber: 4
     }
@@ -720,23 +718,26 @@ const schemas: FormSchema[] = [
     component: 'CustomDate',
     label: '自定义时间',
     defaultValue: '3天',
-    componentProps: {
-      options: [
-        {
-          label: '近3天',
-          value: '3天'
-        },
-        {
-          label: '近7天',
-          value: '7天'
-        },
-        {
-          label: '近30天',
-          value: '30天'
+    componentProps: ({ formModel }) => {
+      return {
+        options: [
+          {
+            label: '近3天',
+            value: '3天'
+          },
+          {
+            label: '近7天',
+            value: '7天'
+          },
+          {
+            label: '近30天',
+            value: '30天'
+          }
+        ],
+        onChange(_, date) {
+          console.log(formModel)
+          formModel.rangeTime = date
         }
-      ],
-      onChange() {
-        // console.log(value, date)
       }
     },
     colProps: {
@@ -849,5 +850,8 @@ function handleSubmit(values: any) {
 }
 onMounted(() => {
   console.log(getFieldsValue())
+  setFieldsValue({
+    fieldsc1: ['https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png']
+  })
 })
 </script>
